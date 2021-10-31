@@ -80,3 +80,120 @@
 	  - view(\\d+)
 	- video
 	  - watch(\\d+) / edit(\\d+) / delete(\\d+)
+ 
+# 5.0-5.10 Template using Basic Pug
+  - install & configure pug
+    - `npm i pug`
+	- mkdir `/src/views`
+	- `app.set("view engine", "pug");`
+	- `app.set("views", process.cwd() + "/src/views");`
+	- `app.disable("x-powered-by");`
+  - render "home.pug"
+    - create `home.pug` in views folder
+	  - touch `/src/views/home.pug`
+    - render pug from controller
+	  - `res.render("[PUG_FILE]");`
+	- write pug file(make sure indent)
+	  - ```
+	  	doctype html
+	  	html
+	  	head
+	  	title [PAGE_NAME] | [PROJECT]
+		link(rel="stylesheet" href="https://unpkg.com/mvp.css")
+	  	body
+	  	header
+		h1 [PAGE_NAME]
+		main
+		footer &copy; [YEAR] [PROJECT]
+  - create footer partial
+    - mkdir `/src/views/partials`
+    - touch `footer.pug`
+    - include partial
+	  - include partials/footer
+	- show year with javascript
+	  - `#{new Date().getFullYear()}`
+  - create base
+    - rename `home` to `base`
+	- use variable `pageTitle` in `<title>`
+	  - #{pageTitle}
+	- add variables in controller
+	  - `res.render("[VIEW]", {[VAR]: [VALUE]});`
+	- add `block [NAME]`
+	  - `block content`
+	- create home.pug again
+	- extends base and fill block
+	  - `extends base`
+	  - indent from `block content`
+	- create pug file for every controller
+  - create mixins for video list
+    - create makeshift videos array(video as object)
+	- render videos array as variable
+    - mkdir `/src/views/mixins`
+	- touch `[MIXIN].pug`
+	  - `video.pug`
+	- write mixin
+	  - ```
+	  	mixin [NAME]([OBJ])
+	  	div
+		h4=[OBJ].title
+		ul
+		li #{[OBJ.~]}
+		li #{[OBJ.~]}
+		li #{[OBJ.~]}
+		...
+     - include mixin and use it
+	   - `include mixins/[MIXIN]`
+	   - `+[MIXIN]([OBJ])`
+	 - `each` statement to list video
+	   - ```
+		each [ITEM] in [ARRAY]
+		[MIXIN]
+		else
+		li [EMPTY_MSG]
+
+# 6.0-6.6 configuring makeshift CRUD using Array DB
+  - watch [R]
+	- watch:controller
+	  - get id value from parameters
+	  - get video from videos using id
+	  - pageTitle as `video.title`
+	  - send video as variable
+	- watch:template
+	  - show video detail
+	  - "Edit Video" button
+  - edit [U]
+    - getEdit:controller
+	  - get id value from parameters
+	  - get video from videos using id
+	  - pageTitle as `video.title`
+	  - send video as variable
+	- getEdit:template
+	  - create `<form>`, textbox, submit btn(required)
+	  - textbox should have default value
+	- edit:router
+	  - `app.route("[ROUTE]").get([CONT]).post([CONT])`
+	- postEdit:template
+	  - add `name` attribute to textbox
+	  - enable import form data to `req.body`(in front of Routers)
+	  : `app.use(express.urlencoded({ extended: true }));`
+	- postEdit:controller
+	  - redirect to watch page
+	  - replace data to new one
+	  : `const { [DATA] } = req.body;`
+	  : `[OBJ].[DATA] = [NEW_DATA];`
+  - upload [C]
+    - upload:router
+	  - `app.route("[ROUTE]").get([CONT]).post([CONT])`
+	- getUpload:controller
+	  - res.render "upload" pug file
+	- getUpload:template
+	  - create `<form>`, textbox, submit btn
+	- postUpload:template
+	  - add `name` attribute to textbox
+	- postUpload:controller
+	  - load form value
+	  - create new object
+	  - push object into array
+	  - res.redirect to `/`
+
+# 6.0-6.28 MongoDB
