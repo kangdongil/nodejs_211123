@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/main.js"
+    "dev": "nodemon --exec babel-node src/server.js"
   },
   "author": "",
   "license": "MIT",
@@ -13,5 +13,9 @@
     "@babel/node": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
     "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   }
 }
