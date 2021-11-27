@@ -239,13 +239,18 @@
 	  - `mongoose.model("[Name]", [SCHEMA]);`
 	- export default `[Model]`
 	- import model in `init.js` after `db`
-  - Example: Video Model
-    - String: title / description / createdAt / hashtags / views(meta) / rating(meta)
-  - Example: User Model
+  - mongoose middleware
+    - format schema's value
+	  - Create: [Schema].static('[NAME]', [FUNC](attrb))
+	  - Usage: [Model].[NAME](attrb)
+
+  * Example1: Video Model
+    - String: title / description / createdAt(array) / hashtags / views(meta) / rating(meta)
+  * Example2: User Model
     - email / username / password / noPasswordAccount(Boolean) / avatarUrl / name / location
 
 # 6.8 Mongoose CRUD
-  - 
+  - Prescription:
     - import model, when controller use it
   - Create(C) Document
     - View
@@ -259,14 +264,70 @@
 	  - redirect
 	- Method 1: new [Model] / [Document].save()
 	  - const as `new [Model]({~});`(async / await)
-	  - [Document].save()
+	  - [Document].save()(async / await)
 	- Method 2: [Model].create
 	  - const as `[Model].create({~})`(async / await)
 	  - `try / catch(err)`
 	  - send errMsg `err._message`
 	  - if errMsg, show errMsg
-  - Read(R) Document
-  
-  - Update(U) Document
-  - Search Document
+  - Read(R) Instance
+    - View
+	  - get data from controller
+	  - use data and display it
+	- Router
+	- docList:Controller(POST)
+	  - [Model].find({})
+	  : search all documents
+	  - .sort({[ENTRY]: "desc"})
+	  : select sort option
+	  - if doc not exist, `each ~ else`(pug)
+	  - render data
+	- document:Controller(POST)
+	  - [Model].findById([ID])
+	  : search specific document
+	  - if !doc, render 404
+  - Update(U) Instance
+    - View
+	  - Edit Video `<a>`
+	  - get data from controller
+	  - show data on form by `value`
+	- Router
+	- Controller(GET)
+	  - get `id` from `req.params`
+	  - [Model].findById([ID])
+	  : search specific document
+	  - if !doc, render 404
+	- Controller(POST)
+	  - `id` from `req.params`, form data from `req.body`
+	  - update Instance
+	  - redirect
+	- Method 1: overwrite object & [Model].save()
+	  - [Model].findById([ID])
+	  - [doc].[entry] = [form's entry value]
+	  - [doc].save() (async / await)
+	- Method 2: [Model].findByIdAndUpdate
+	  - [Model].exists({ _id: id })
+	  - if !doc, render 404
+	  - [Model].findByIdAndUpdate([ID], {~})
   - Delete(D) Document
+    - View
+	  - Delete Video `<a>`
+	- Router
+	- Controller
+	  - [Model].findByIdAndDelete([ID])
+	  - redirect
+  - Search Document
+    - View
+	  - form(GET): keyword
+	  - result list
+	- Router
+	- Controller
+	  - get `keyword` from `req.query`
+	  - make empty array
+	  - if keyword-related documents exists,
+	   replace array
+	  - send it to template
+	- specify search result
+	  - Video.find({~})
+	  - [Entry]: {$regex: new RegExp([CONDITIONS])}
+	  
