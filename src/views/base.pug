@@ -6,12 +6,7 @@ html(lang="ko")
 	body
 		header
 			h1=pageTitle
-			nav
-				ul
-					li
-						a(href="/") Home
-					li
-						a(href="/videos/upload") Upload Video
+			include partials/nav
 		main
 			block content
 		

@@ -10,24 +10,27 @@
 	  - `npm run dev`
 	- mkdir `/src` & touch `src/init.js`
   - configure Babel & Nodemon
-    - Install & Configure Babel
+    - install & configure Babel
 	  - `npm i --save-dev @babel/core @babel/preset-env`
 	  - babel.config.json `{"preset": ["@babel/preset-env"]}`
-	- Install Nodemon & modify `dev` script
+	- install Nodemon & modify `dev` script
 	  - `npm i --save-dev @babel/node nodemon`
 	  - `"dev": "nodemon --exec babel-node src/init.js`
   - Install Express & configure inline server
+    - touch `src/server.js`
     - install express
 	  - `npm i express`
-	- touch `src/server.js` and create express application
+	- create express application
 	  - `import express from "express";`
 	  - `const app = express();`
 	- connect `server.js` to `init.js`
-	- listen to PORT and handle callback on `app`
+	  - `export default app;`(server.js)
+	  - `import app from "./server";`(init.js)
+	- init.js: listen to PORT and handle callback on `app`
 	  - `app.listen(PORT, [CALLBACK]);`
 	  - `const PORT = 4000;`
 	  - [CALLBACK]: `() => {console.log(`[LOCALHOST_URL]`)}`
-	- GET request and response "/" URL
+	- server.js: GET request and response "/" URL
 	  - ROUTE: `app.get("/", [CONT])`
 	  - CONTROLLER:
 	    ```
@@ -105,11 +108,11 @@
 		h1 [PAGE_NAME]
 		main
 		footer &copy; [YEAR] [PROJECT]
-  - create footer partial
+  - create footer/nav partial
     - mkdir `/src/views/partials`
     - touch `footer.pug`
     - include partial
-	  - include partials/footer
+	  - include partials/[FOOTER]
 	- show year with javascript
 	  - `#{new Date().getFullYear()}`
   - create base
@@ -150,7 +153,7 @@
 		[MIXIN]
 		else
 		li [EMPTY_MSG]
-
+		
 # 6.0-6.6 configuring makeshift CRUD using Array DB
   - watch [R]
 	- watch:controller
@@ -196,4 +199,74 @@
 	  - push object into array
 	  - res.redirect to `/`
 
-# 6.0-6.28 MongoDB
+# 6.0-6.7 Start MongoDB
+  - how to run MongoDB in IDE
+    - open new terminals(`[Alt]+[Shift]+T`)
+	- type each as `mongod`(connect DB) and `mongo(shell)`
+  - touch `src/db.js` and import in `init.js`
+  - install and configure mongoose
+    - `npm i mongoose`
+	- db.js
+	  - `import mongoose from "mongoose";`
+	  - `mongoose.connect("mongodb://[SERVER]/[PROJECT_NAME]")`
+  - add Mongoose event handlers
+    - DB Connection
+	  - `mongoose.connection.once("open", [CALLBACK])`
+	- DB Error
+	  - `mongoose.connection.on("error", [CALLBACK](error))`
+
+# 6.0-6.7 Mongoose Setup
+  - change router's parameter regExp
+    - `\\d+` >> `[0-9a-f]{24}`
+  - touch `404.pug`
+  - create schema and model
+    - mkdir `src/models`
+    - touch `[Model].js`
+	- import mongoose
+    - schema
+	  - const name as `[data_name]Schema`
+	  - `new mongoose.Schema({~});`
+	  - `{~}`: `[ENTRY]: { type: [Type], [PROP], ...};`
+	- schema type
+	  - String / Number / Boolean / Date
+	- schema options
+	  - input by user
+	  : trim / required / unique / 
+	  maxlength / minlength / uppercase / lowercase
+	  - default
+	- model
+	  - const name as `[Model]`
+	  - `mongoose.model("[Name]", [SCHEMA]);`
+	- export default `[Model]`
+	- import model in `init.js` after `db`
+  - Example: Video Model
+    - String: title / description / createdAt / hashtags / views(meta) / rating(meta)
+  - Example: User Model
+    - email / username / password / noPasswordAccount(Boolean) / avatarUrl / name / location
+
+# 6.8 Mongoose CRUD
+  - 
+    - import model, when controller use it
+  - Create(C) Document
+    - View
+	  - create inputs and add `name` attribute()
+	  - add more attribute according to schema options
+	  : (required / maxlength / minlength)
+	- Router
+	- Controller(POST):
+  	  - get form data from `req.body`
+	  - create `Instance`(async / await)
+	  - redirect
+	- Method 1: new [Model] / [Document].save()
+	  - const as `new [Model]({~});`(async / await)
+	  - [Document].save()
+	- Method 2: [Model].create
+	  - const as `[Model].create({~})`(async / await)
+	  - `try / catch(err)`
+	  - send errMsg `err._message`
+	  - if errMsg, show errMsg
+  - Read(R) Document
+  
+  - Update(U) Document
+  - Search Document
+  - Delete(D) Document
